@@ -1,0 +1,27 @@
+a   PNR Testcase Generation::  DesignName = MY_NMOS
+a   Output File:
+a   MY_NMOS.pinLayout
+a   Width of Routing Clip    = 7
+a   Height of Routing Clip   = 2
+a   Tracks per Placement Row = 3.5
+a   Width of Placement Clip  = 7
+a   Tracks per Placement Clip = 3
+
+i   ===InstanceInfo===
+i   InstID Type Width
+i   insMM0 NMOS 3
+
+i   ===PinInfo===
+i   PinID NetID InstID PinName PinDirection PinLength
+i   pin0 net0 insMM0 S s 3
+i   pin1 net1 insMM0 G s 3
+i   pin2 net2 insMM0 D s 3
+i   pin3 net0 ext VSS t -1 P
+i   pin4 net1 ext G t -1 I
+i   pin5 net2 ext D t -1 O
+
+i   ===NetInfo===
+i   NetID N-PinNet PinList
+i   net0 2PinNet pin3 pin0
+i   net1 2PinNet pin4 pin1
+i   net2 2PinNet pin5 pin2
