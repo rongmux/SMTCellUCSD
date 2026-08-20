@@ -12,7 +12,9 @@ Z3FLAGS=parallel.enable=true
 KLAYOUT=$(shell which klayout)
 
 # GDT to GDS
-GDT2GDS=$(shell which gdt2gds.Linux)
+# The tool path is commonly configured in ~/.bashrc after its interactive-shell
+# guard, so resolve it through an interactive Bash rather than /bin/sh.
+GDT2GDS=$(shell bash -ic 'command -v gdt2gds.Linux' 2>/dev/null)
 
 # Misc
 RM=rm -rf
@@ -87,6 +89,8 @@ genPinLayouts:
 
 # basic flow
 SMTCell:
+	@test -n "$(Z3)" || { echo "[ERROR] z3 is not installed or not available in PATH" >&2; exit 1; }
+	@test -n "$(GDT2GDS)" || { echo "[ERROR] gdt2gds.Linux is not installed or not available in PATH" >&2; exit 1; }
 	mkdir -m 777 -p $(RESULTS_DIR)/inputSMT
 	mkdir -m 777 -p $(RESULTS_DIR)/Z3
 	mkdir -m 777 -p $(RESULTS_DIR)/solutionSMT

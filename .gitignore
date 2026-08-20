@@ -5,3 +5,4 @@ results/results_?F?T_*/*
 */__pycache__/*
 __pycache__/*
 util/LayoutGen/__pycache__/*
+results

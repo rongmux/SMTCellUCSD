@@ -36,13 +36,14 @@ ExternalProject_Add(
     "-DFMT_INSTALL:BOOL=ON"
     "-DFMT_DOC:BOOL=OFF"
     "-DFMT_TEST:BOOL=OFF"
+    "-DCMAKE_INSTALL_LIBDIR:PATH=lib"
     "-DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/fmt"
     BUILD_COMMAND make -j8
     INSTALL_COMMAND make install
 )
 
 set(FMT_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/fmt/include)
-set(FMT_LIBRARY_DIRS ${CMAKE_BINARY_DIR}/fmt/lib64)
+set(FMT_LIBRARY_DIRS ${CMAKE_BINARY_DIR}/fmt/lib)
 
 # nlohmann-json
 ExternalProject_Add(
@@ -106,4 +107,3 @@ add_executable(convSMTResult ${CONVSMTRESULT_SRC})
 add_dependencies(convSMTResult boost fmt nlohmann-json)
 target_include_directories(convSMTResult PRIVATE ${BOOST_INCLUDE_DIRS} ${NLOHMANN-JSON_INCLUDE_DIRS} ${FMT_INCLUDE_DIRS})
 target_link_libraries(convSMTResult PRIVATE ${BOOST_LIBRARY_DIRS}/libboost_regex.a ${FMT_LIBRARY_DIRS}/libfmt.a stdc++fs)
-

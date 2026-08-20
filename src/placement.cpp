@@ -4146,6 +4146,38 @@ void Placement::write_cost_func_3F6T(FILE *fp, int Partition_Parameter) {
 
 // WARN FLAG: Align with 2F4T and 3F5T
 void Placement::write_cost_func(FILE *fp, int Partition_Parameter) {
+  // Standalone transistor cells may contain only one device polarity.  The
+  // normal cost-generation paths assume that both a PMOS and an NMOS exist,
+  // so handle the absent polarity explicitly before indexing the instance
+  // vector.
+  if (SMTCell::getNumPMOS() == 0 || SMTCell::getNumNMOS() == 0) {
+    const int len = SMTCell::getBitLength_numTrackV();
+    auto write_polarity_cost = [&](const char *cost_name, int begin, int end) {
+      if (begin >= end) {
+        fmt::print(fp, "(assert (= {} (_ bv0 {})))\n", cost_name, len);
+        return;
+      }
+
+      fmt::print(fp, "(assert (= {}", cost_name);
+      for (int idx = begin; idx < end - 1; ++idx) {
+        fmt::print(fp, " (max");
+      }
+      for (int idx = begin; idx < end; ++idx) {
+        const std::vector<int> fingers = SMTCell::getAvailableNumFinger(
+            SMTCell::getInst(idx)->getInstWidth(), SMTCell::getTrackEachPRow());
+        fmt::print(fp, " (bvadd x{} (_ bv{} {})){}", idx,
+                   2 * fingers[0] * SMTCell::getMetalPitch(1), len,
+                   idx == begin ? "" : ")");
+      }
+      fmt::print(fp, "))\n");
+    };
+
+    write_polarity_cost("COST_SIZE_P", 0, SMTCell::getNumPMOS());
+    write_polarity_cost("COST_SIZE_N", SMTCell::getNumPMOS(),
+                        SMTCell::getNumInstance());
+    return;
+  }
+
   int isPRT_P = 0;
   int isPRT_N = 0;
   if (Partition_Parameter == 2) {
