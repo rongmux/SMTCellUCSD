@@ -115,13 +115,29 @@ void LayoutParser::parsePinLayout(std::string pinlayout_path,
         std::vector<int> tmp_finger = SMTCell::getAvailableNumFinger(
             instWidth, SMTCell::getTrackEachPRow());
 
-        if (instType == "NMOS") {
-          if (SMTCell::getLastIdxPMOS() == -1) {
-            SMTCell::setLastIdxPMOS(SMTCell::getNumInstance() - 1);
-          }
-          instY = 0;
+        // if (instType == "NMOS") {
+        //   if (SMTCell::getLastIdxPMOS() == -1) {
+        //     SMTCell::setLastIdxPMOS(SMTCell::getNumInstance() - 1);
+        //   }
+        //   instY = 0;
+        // } else {
+        //   instY = SMTCell::getNumPTrackH() - instWidth / tmp_finger.at(0);
+        // }
+        if (instType == "PMOS") {
+            // 当前实例就是目前最后一个 PMOS
+            SMTCell::setLastIdxPMOS(SMTCell::getNumInstance());
+            instY =
+                SMTCell::getNumPTrackH()
+                - instWidth / tmp_finger.at(0);
+        } else if (instType == "NMOS") {
+            instY = 0;
         } else {
-          instY = SMTCell::getNumPTrackH() - instWidth / tmp_finger.at(0);
+            fmt::print(
+                stderr,
+                "[ERROR] Unsupported instance type: {}\n",
+                instType
+            );
+            exit(1);
         }
         // [instName] [instType] [instWidth] [instY]
 
